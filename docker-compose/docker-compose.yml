@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  wager-api:
+    container_name: wager-api
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    volumes:
+      - "wager-api-logs:/app/logs"
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    depends_on:
+      - sql-server-configurator
+    environment:
+      JAR: ${JAR_NAME}
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://sql-server:1433;databaseName=${DB_NAME};encrypt=false
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PWD}
+      SERVER_PORT: ${SERVER_PORT}
+    restart: always
+
+  sql-server:
+    container_name: sql-server
+    image: mcr.microsoft.com/mssql/server:2022-CU9-ubuntu-20.04
+    ports:
+      - "1433:1433"
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "sh", "-c", "dbHealthcheck.sh"]
+      interval: 10s
+      retries: 10
+      start_period: 10s
+      timeout: 3s
+    environment:
+      SA_PASSWORD: ${DB_PWD}
+      ACCEPT_EULA: "Y"
+    volumes:
+      - wager-api-db:/var/opt/mssql/
+      - wager-api-db:/var/opt/sqlserver/data
+      - wager-api-db:/var/opt/sqlserver/log
+      - wager-api-db:/var/opt/sqlserver/backup
+
+  sql-server-configurator:
+    image: mcr.microsoft.com/mssql/server:2022-CU9-ubuntu-20.04
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+      - ./dbInit.sh:/dbInit.sh
+    depends_on:
+      sql-server:
+        condition: service_healthy
+    command: ["sh", "-c", "./dbInit.sh"]
+    environment:
+      DB_PWD: ${DB_PWD}
+      DB_NAME: ${DB_NAME}
+
+volumes:
+  wager-api-logs:
+  wager-api-db:
