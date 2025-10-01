@@ -31,13 +31,18 @@ docker compose up --build
 
 ## API Endpoints
 ### Create a Jackpot
+
 POST /api/jackpots
+
 Request:
+
 {
   "name": "Mega Jackpot",
   "amount": 1000.0
 }
+
 Response:
+
 {
   "id": 1,
   "name": "Mega Jackpot",
@@ -45,8 +50,11 @@ Response:
 }
 
 ### Place a Bet
+
 POST /api/bets
+
 Request:
+
 {
   "jackpotId": 1,
   "playerAlias": "eren",
@@ -54,6 +62,7 @@ Request:
 }
 
 Response:
+
 {
   "id": 101,
   "jackpotId": 1,
@@ -63,8 +72,11 @@ Response:
 }
 
 ### Get All Jackpots
+
 GET /api/jackpots
+
 Response:
+
 [
   {
     "id": 1,
@@ -78,9 +90,12 @@ Response:
   }
 ]
 
-### Get All Jackpots
+### Get All 
+
 GET /api/jackpots
+
 Response:
+
 [
   {
     "id": 1,
