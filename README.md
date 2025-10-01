@@ -20,13 +20,13 @@ Wager API is a backend service built with Java Spring Boot and Docker Compose. I
 
 ```bash
 mvn clean package -DskipTests
-```bash
+```
 
 ### Run with Docker
 ```bash
 cd docker-compose
 docker compose up --build
-```bash
+```
 
 
 ## API Endpoints
